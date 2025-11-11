@@ -287,27 +287,79 @@ python3 cli/estimate_pages.py configs/vue.json --max-discovery 2000
 
 ## Repository Architecture
 
+### Modular Architecture
+
+The codebase has evolved from a single-file design into a modular architecture:
+
+**Core Scrapers** (Independent scraping modules):
+- `doc_scraper.py` (1,789 lines) - HTML documentation scraping with async support
+- `github_scraper.py` (797 lines) - GitHub repo scraping with AST analysis
+- `pdf_scraper.py` (401 lines) - PDF extraction with OCR support
+- `pdf_extractor_poc.py` (1,222 lines) - Advanced PDF features
+
+**Unified Multi-Source** (v2.0.0 architecture):
+- `unified_scraper.py` (449 lines) - Orchestrates multi-source scraping
+- `config_validator.py` (376 lines) - Validates unified configs
+- `conflict_detector.py` (513 lines) - Detects docs vs code conflicts
+- `merge_sources.py` (513 lines) - Rule-based & AI-powered merging
+- `unified_skill_builder.py` (444 lines) - Builds unified skills
+- `code_analyzer.py` (491 lines) - AST parsing for 6+ languages
+
+**Utilities & Tools**:
+- `estimate_pages.py` (288 lines) - Page count estimation
+- `enhance_skill.py` / `enhance_skill_local.py` (303 lines) - AI enhancement
+- `package_skill.py` - Skill packaging
+- `upload_skill.py` - Direct upload to Claude
+- `split_config.py` (320 lines) - Split large configs
+- `generate_router.py` (274 lines) - Router/hub skill generation
+
+**llms.txt Support**:
+- `llms_txt_detector.py` - Detects llms.txt files
+- `llms_txt_downloader.py` - Downloads llms.txt variants
+- `llms_txt_parser.py` - Parses llms.txt format
+
 ### File Structure
 
 ```
 Skill_Seekers/
-├── cli/doc_scraper.py              # Main tool (single-file, ~790 lines)
-├── cli/estimate_pages.py           # Page count estimator (fast, no data)
-├── cli/enhance_skill.py            # AI enhancement (API-based)
-├── cli/enhance_skill_local.py      # AI enhancement (LOCAL, no API)
-├── cli/package_skill.py            # Skill packager
-├── cli/run_tests.py                # Test runner (390 tests, 378 passing)
-├── configs/                    # Preset configurations
-│   ├── godot.json
-│   ├── react.json
-│   ├── vue.json
-│   ├── django.json
-│   ├── fastapi.json
-│   └── steam-economy-complete.json
+├── cli/                        # All CLI tools (modular)
+│   ├── doc_scraper.py          # HTML documentation scraper
+│   ├── github_scraper.py       # GitHub repository scraper
+│   ├── pdf_scraper.py          # PDF extraction tool
+│   ├── unified_scraper.py      # Multi-source orchestrator
+│   ├── config_validator.py     # Config validation
+│   ├── conflict_detector.py    # Conflict detection
+│   ├── merge_sources.py        # Intelligent merging
+│   ├── code_analyzer.py        # AST code analysis
+│   ├── unified_skill_builder.py # Unified skill builder
+│   ├── estimate_pages.py       # Page count estimator
+│   ├── enhance_skill.py        # API-based enhancement
+│   ├── enhance_skill_local.py  # Local enhancement
+│   ├── package_skill.py        # Skill packager
+│   ├── upload_skill.py         # Upload to Claude
+│   ├── split_config.py         # Config splitting
+│   ├── generate_router.py      # Router generation
+│   ├── llms_txt_detector.py    # llms.txt detection
+│   ├── llms_txt_downloader.py  # llms.txt downloading
+│   ├── llms_txt_parser.py      # llms.txt parsing
+│   ├── constants.py            # Shared constants
+│   └── run_tests.py            # Test runner
+├── skill_seeker_mcp/           # MCP server (9 tools)
+│   ├── server.py               # Main MCP server
+│   └── tools/                  # MCP tool implementations
+├── configs/                    # 24 preset configurations
+│   ├── Single-source (14): godot.json, react.json, vue.json, etc.
+│   ├── Unified (5): react_unified.json, django_unified.json, etc.
+│   └── Test configs (5): godot_github.json, example_pdf.json, etc.
+├── tests/                      # Test suite (390 tests, 378 passing)
+│   ├── test_unified.py         # 12 failing unified tests
+│   ├── test_integration.py     # Integration tests
+│   └── test_*.py               # Feature tests
 ├── docs/                       # Documentation
-│   ├── CLAUDE.md               # Detailed technical architecture
+│   ├── UNIFIED_SCRAPING.md     # Multi-source guide
+│   ├── MCP_SETUP.md            # MCP setup guide
 │   ├── ENHANCEMENT.md          # Enhancement guide
-│   └── UPLOAD_GUIDE.md         # How to upload skills
+│   └── UPLOAD_GUIDE.md         # Upload guide
 └── output/                     # Generated output (git-ignored)
     ├── {name}_data/            # Scraped raw data (cached)
     │   ├── pages/*.json        # Individual page data
@@ -326,12 +378,14 @@ Skill_Seekers/
 
 ### Data Flow
 
-1. **Scrape Phase** (`scrape_all()` in doc_scraper.py:228-251):
+**Single-Source Workflow** (Documentation, GitHub, or PDF only):
+
+1. **Scrape Phase** (`scrape_all()` in respective scraper):
    - Input: Config JSON (name, base_url, selectors, url_patterns, categories)
-   - Process: BFS traversal from base_url, respecting include/exclude patterns
+   - Process: BFS traversal (HTML), API calls (GitHub), or PDF extraction
    - Output: `output/{name}_data/pages/*.json` + `summary.json`
 
-2. **Build Phase** (`build_skill()` in doc_scraper.py:561-601):
+2. **Build Phase** (`build_skill()` in respective scraper):
    - Input: Scraped JSON data from `output/{name}_data/`
    - Process: Load pages → Smart categorize → Extract patterns → Generate references
    - Output: `output/{name}/SKILL.md` + `output/{name}/references/*.md`
@@ -341,10 +395,39 @@ Skill_Seekers/
    - Process: Claude analyzes references and rewrites SKILL.md
    - Output: Enhanced SKILL.md with real examples and guidance
 
-4. **Package Phase**:
+4. **Package Phase** (`package_skill.py`):
    - Input: Skill directory
    - Process: Zip all files (excluding .backup)
    - Output: `{name}.zip`
+
+**Unified Multi-Source Workflow** (v2.0.0):
+
+1. **Config Validation** (`config_validator.py`):
+   - Validates unified config structure
+   - Checks source types (docs, github, pdf)
+   - Ensures merge mode is valid
+
+2. **Multi-Source Scraping** (`unified_scraper.py`):
+   - Scrapes each source independently
+   - Stores in `output/{name}_data_{source_type}/`
+
+3. **Conflict Detection** (`conflict_detector.py`):
+   - Compares docs vs code implementations
+   - Detects outdated docs, undocumented features
+   - Generates conflict report JSON
+
+4. **Intelligent Merging** (`merge_sources.py`):
+   - Rule-based: Priority-based merging
+   - Claude-enhanced: AI-powered resolution
+   - Produces unified pages JSON
+
+5. **Unified Skill Build** (`unified_skill_builder.py`):
+   - Builds comprehensive SKILL.md
+   - Includes conflict warnings (⚠️)
+   - Side-by-side comparisons
+
+6. **Package & Upload**:
+   - Same as single-source workflow
 
 ### Configuration File Structure
 
@@ -602,18 +685,89 @@ python3 /mnt/skills/examples/skill-creator/scripts/cli/package_skill.py output/g
 
 The correct command uses the local `cli/package_skill.py` in the repository root.
 
-## Key Code Locations
+## Key Modules & Functions
 
-- **URL validation**: `is_valid_url()` doc_scraper.py:49-64
-- **Content extraction**: `extract_content()` doc_scraper.py:66-133
-- **Language detection**: `detect_language()` doc_scraper.py:135-165
-- **Pattern extraction**: `extract_patterns()` doc_scraper.py:167-183
-- **Smart categorization**: `smart_categorize()` doc_scraper.py:282-323
-- **Category inference**: `infer_categories()` doc_scraper.py:325-351
-- **Quick reference generation**: `generate_quick_reference()` doc_scraper.py:353-372
-- **SKILL.md generation**: `create_enhanced_skill_md()` doc_scraper.py:426-542
-- **Scraping loop**: `scrape_all()` doc_scraper.py:228-251
-- **Main workflow**: `main()` doc_scraper.py:663-789
+### doc_scraper.py (HTML Documentation Scraping)
+- `DocToSkillConverter` class - Main scraper with async support
+- `scrape_all()` - BFS traversal of documentation
+- `extract_content()` - HTML content extraction with selectors
+- `detect_language()` - Code language detection (Python, JS, GDScript, etc.)
+- `smart_categorize()` - AI categorization by keywords
+- `build_skill()` - Generates SKILL.md and references/
+
+### github_scraper.py (Repository Analysis)
+- `GitHubScraper` class - GitHub API + code analysis
+- `scrape_repo()` - Fetches README, file tree, issues, PRs
+- `analyze_code_files()` - AST parsing for 6+ languages
+- `extract_api_info()` - Extracts functions, classes, methods
+- Supported languages: Python, JavaScript, TypeScript, Java, C++, Go
+
+### unified_scraper.py (Multi-Source Orchestration)
+- `UnifiedScraper` class - Orchestrates multi-source workflow
+- `scrape_all_sources()` - Scrapes docs + GitHub + PDF
+- `detect_conflicts()` - Calls conflict_detector.py
+- `merge_sources()` - Intelligent merging with rule-based or AI
+
+### conflict_detector.py (Documentation vs Code Analysis)
+- `ConflictDetector` class - Finds discrepancies
+- `detect_conflicts()` - Compares docs vs implementation
+- `find_outdated_docs()` - Detects version mismatches
+- `find_undocumented_features()` - Missing documentation
+
+### code_analyzer.py (AST Code Analysis)
+- `CodeAnalyzer` class - Multi-language AST parser
+- `analyze_python()` - Python AST analysis
+- `analyze_javascript()` - JS/TS analysis (esprima)
+- `extract_functions()` / `extract_classes()` - API extraction
+
+### config_validator.py (Config Validation)
+- `ConfigValidator` class - Validates all config types
+- `validate_unified_config()` - Unified config validation
+- `validate_single_source()` - Single-source validation
+- Validates URLs, selectors, source types, merge modes
+
+## Common Development Patterns
+
+### Adding Support for a New Documentation Site
+
+1. **Test selectors** using BeautifulSoup (see Testing & Verification section)
+2. **Create config** in `configs/yourframework.json`
+3. **Test with limited pages** first (`"max_pages": 20`)
+4. **Run estimation** with `python3 cli/estimate_pages.py configs/yourframework.json`
+5. **Full scrape** with `python3 cli/doc_scraper.py --config configs/yourframework.json`
+
+### Creating a Unified Multi-Source Skill
+
+1. **Create individual configs** for each source (docs, GitHub, PDF)
+2. **Create unified config** combining all sources (see `configs/*_unified.json`)
+3. **Run unified scraper** with `python3 cli/unified_scraper.py --config configs/your_unified.json`
+4. **Review conflicts** in the generated SKILL.md (look for ⚠️ warnings)
+5. **Choose merge mode**: `rule-based` (fast) or `claude-enhanced` (better quality)
+
+### Extending the Code Analyzer
+
+To add support for a new programming language:
+
+1. **Edit `code_analyzer.py`**
+2. **Add language parser** (e.g., tree-sitter for C#, Ruby, etc.)
+3. **Implement `analyze_<language>()` method**
+4. **Extract API patterns** (functions, classes, methods)
+5. **Add tests** in `tests/test_code_analyzer.py`
+
+### Module Import Pattern
+
+All CLI tools use this pattern for imports:
+
+```python
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from cli.config_validator import ConfigValidator
+from cli.conflict_detector import ConflictDetector
+# etc.
+```
+
+This allows CLI tools to be run directly (e.g., `python3 cli/doc_scraper.py`) without installing as a package.
 
 ## Enhancement Details
 
@@ -713,11 +867,51 @@ The correct command uses the local `cli/package_skill.py` in the repository root
 - **[TODO.md](TODO.md)** - Current focus
 - **[STRUCTURE.md](STRUCTURE.md)** - Repository structure
 
+## Testing
+
+**Test Suite:** 390 tests (378 passing, 12 failing in unified tests)
+
+### Running Tests
+
+```bash
+# Run all tests with colored output
+python3 cli/run_tests.py
+
+# Run specific test file
+python3 -m pytest tests/test_unified.py -v
+
+# Run with pytest directly
+python3 -m pytest tests/ -v
+
+# Run single test
+python3 -m pytest tests/test_integration.py::TestIntegration::test_basic_scraping -v
+```
+
+### Test Organization
+
+- `test_integration.py` - End-to-end workflow tests
+- `test_unified.py` - Unified multi-source tests (12 failing - needs fixing)
+- `test_config_validation.py` - Config validation tests
+- `test_scraper_features.py` - Core scraping features
+- `test_github_scraper.py` - GitHub scraping tests
+- `test_pdf_scraper.py` - PDF extraction tests
+- `test_async_scraping.py` - Async mode tests
+- `test_mcp_server.py` - MCP integration tests
+
+### Known Issues
+
+**Priority**: Fix 12 failing tests in `tests/test_unified.py`
+- ConfigValidator expecting dict instead of file path
+- ConflictDetector expecting dict pages, not list
+
 ## Notes for Claude Code
 
-- This is a Python-based documentation scraper
-- Single-file design (`doc_scraper.py` ~790 lines)
-- No build system, no tests, minimal dependencies
+- This is a Python-based documentation scraper with modular architecture
+- Evolved from single-file (~790 lines) to modular design (9,874 lines across cli/)
+- Core modules: doc_scraper, github_scraper, pdf_scraper, unified_scraper
+- Unified multi-source scraping (v2.0.0) with conflict detection
+- MCP server integration with 9 tools
+- 390 tests (378 passing, focus on fixing 12 unified tests)
 - Output is cached and reusable
 - Enhancement is optional but highly recommended
 - All scraped data stored in `output/` (git-ignored)
