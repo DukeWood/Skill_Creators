@@ -77,6 +77,55 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Status:** ✅ Tested and working in production with Claude Code
 
+## 🌿 Git Workflow & Branch Strategy
+
+**Current Branch:** `development` (this is the only and default branch)
+
+### Repository Structure
+
+This is a **forked repository** with a single-branch workflow:
+
+- **Original Repository:** `yusufkaraaslan/Skill_Seekers`
+- **Your Fork:** `DukeWood/Skill_Creators` (created November 10, 2025)
+- **Default Branch:** `development` (both repositories)
+- **Total Commits:** 138 commits
+- **No main/master branch exists**
+
+### Historical Context
+
+The original repository initially had both `main` and `development` branches:
+
+- **October 17, 2025:** Initial commit (first commit in repository)
+- **October 26, 2025:** Commit `554536d` merged `main` into `development`
+- **After merge:** The `main` branch was removed, adopting a single-branch strategy
+- **November 10, 2025:** Fork created with `development` as the only branch
+
+### Why This Workflow?
+
+This repository uses a **single-branch development workflow** where:
+
+1. **All development happens on `development`** - No separation between "stable" and "dev"
+2. **Feature branches merge directly into `development`** - Via pull requests (174+ PRs merged)
+3. **No separate production branch needed** - Active development project where continuous iteration is preferred
+4. **Simplified workflow** - Reduces complexity for contributors
+
+### PR Workflow
+
+```
+Feature Branch → Pull Request → development
+```
+
+**Example feature branches:**
+- `feature/c1-github-scraping`
+- `feature/unified-scraping`
+- Various bug fix and enhancement branches
+
+### Key Takeaway
+
+**This is an intentional and valid Git workflow.** The choice of `development` as the primary branch name (instead of `main`) doesn't affect functionality - it reflects the project's active development nature and single-branch strategy.
+
+---
+
 ## Overview
 
 Skill Seeker automatically converts any documentation website into a Claude AI skill. It scrapes documentation, organizes content, extracts code patterns, and packages everything into an uploadable `.zip` file for Claude.
@@ -936,14 +985,58 @@ A complete production-ready application built using Skill Seeker techniques - 7 
 - [docs/uk-visa-tools-ref/](docs/uk-visa-tools-ref/) - Business plan & financial model guides
 - [docs/uk-innovator-visa-ref/](docs/uk-innovator-visa-ref/) - Module 1-5 reference files
 
-**Status:** ✅ Production-ready - All 7 skills packaged and tested
+**Status:**
+- ✅ Modular Skills (v1.2.0) - Production-ready, 7 skills packaged
+- ✅ Mega-Skill (v2.0.0) - Production-ready, uses Claude's xlsx/pptx skills **NEW!**
+
+### v2.0.0 Update: Complete Mega-Skill (November 11, 2025)
+
+**NEW Architecture:** Consolidated all 7 skills into single mega-skill for Claude Desktop deployment.
+
+**Location:** `output/uk-innovator-founder-visa-complete/`
+
+**Key Improvements:**
+- ✅ **Single upload** - One comprehensive skill (~10 MB) vs 7 separate uploads
+- ✅ **Automatic mode routing** - Claude auto-selects mode based on user query
+- ✅ **No Python execution** - Uses Claude's native xlsx (Excel) and pptx (PowerPoint) skills
+- ✅ **shared_context.json actually works** - Fixed isolation issue from modular approach
+- ✅ **Persistent conversation context** - No data loss when switching modes
+- ✅ **Instant file downloads** - Excel and PowerPoint files generated immediately
+
+**The 7 Modes (Hub + Mode Pattern):**
+1. Assessment & Scoring
+2. Business Plan Writing
+3. Financial Model Building (xlsx skill)
+4. Compliance Checking
+5. Pitch Deck Creation (pptx skill)
+6. Document Organization
+7. Knowledge Base
+
+**How It Works:**
+```
+User: "Build my financial model"
+Claude: [Auto-routes to Mode 3]
+Claude: [Invokes native xlsx skill]
+Claude: [Creates Excel with formulas, formatting, 5 sheets]
+Result: Instant download of financial_model.xlsx
+```
+
+**vs Modular Skills:**
+- Modular: User runs `python3 generate_excel.py` (requires Python installed)
+- Mega-Skill: Claude handles everything automatically (no Python needed)
+
+**Documentation:**
+- [output/uk-innovator-founder-visa-complete/MEGA_SKILL_GUIDE.md](output/uk-innovator-founder-visa-complete/MEGA_SKILL_GUIDE.md) - Complete guide
 
 **Key Learnings for Future Projects:**
 - Hub patterns work well for complex multi-step workflows
-- Shared context files enable tight integration between skills
+- Shared context files enable tight integration between skills (but only within single skill directory)
 - Strategic guidance > generic templates
 - Code generation (Excel/PowerPoint) adds significant value
 - Large knowledge bases can be split across skills effectively
+- **Claude Desktop isolation**: Separate skills cannot share files - mega-skill architecture required
+- **Claude's pre-built skills**: xlsx/pptx skills eliminate need for Python execution
+- **Mode-based routing**: LLM automatically selects appropriate mode based on query
 
 ---
 

@@ -1006,7 +1006,9 @@ python3 cli/doc_scraper.py --config configs/godot.json
 
 ### UK Innovator Founder Visa (IFV) Tools
 
-**A complete visa application workflow built with Skill Seeker techniques** - 7 specialized Claude skills that help entrepreneurs secure endorsement for the UK Innovator Founder Visa.
+**A complete visa application workflow built with Skill Seeker techniques** - Available in two deployment options:
+
+#### Option 1: Modular Skills (7 Separate Skills) - v1.2.0
 
 **Location:** `output/uk-visa-tools/`
 
@@ -1019,25 +1021,45 @@ python3 cli/doc_scraper.py --config configs/godot.json
 - 🎤 **uk-innovator-founder-visa-pitch-deck-creator** - PowerPoint generation (15 slides)
 - 📁 **uk-innovator-founder-visa-document-organizer** - Comprehensive submission checklists
 
-**Key features:**
-- Full integration via `shared_context.json` (200+ fields)
-- Python scripts for Excel/PowerPoint generation (1,000+ lines)
-- 7+ MB knowledge base from government modules
-- Strategic endorsing body selection (not shotgun applications)
-- IFV abbreviation pattern for efficient documentation
+**Best for:** Local development, maximum modularity, technical users
 
-**Impact:**
-- 50% time savings (100+ hours → 50-75 hours)
-- 10-20% higher approval rates through strategic body selection
-- £1,000-£2,000 cost savings per avoided application
+#### Option 2: Complete Mega-Skill (**NEW** v2.0.0) - **Recommended for Claude Desktop**
+
+**Location:** `output/uk-innovator-founder-visa-complete/`
+
+**What makes it special:**
+- ✅ **Single upload** - One comprehensive skill with 7 integrated modes
+- ✅ **Automatic routing** - Claude determines which mode based on your request
+- ✅ **No Python commands** - Uses Claude's native xlsx/pptx skills for Excel/PowerPoint
+- ✅ **Seamless data flow** - shared_context.json works perfectly across all modes
+- ✅ **Persistent context** - No data loss when switching between modes
+
+**The 7 Modes:**
+1. Assessment & Scoring
+2. Business Plan Writing
+3. Financial Model Building (**Claude's xlsx skill** → instant Excel download)
+4. Compliance Checking
+5. Pitch Deck Creation (**Claude's pptx skill** → instant PowerPoint download)
+6. Document Organization
+7. Knowledge Base (7+ MB reference material)
+
+**Best for:** Claude Desktop users, streamlined workflow, non-technical users
 
 **Documentation:**
-- [output/uk-visa-tools/README.md](output/uk-visa-tools/README.md) - Complete user guide
+- [output/uk-innovator-founder-visa-complete/MEGA_SKILL_GUIDE.md](output/uk-innovator-founder-visa-complete/MEGA_SKILL_GUIDE.md) - Complete mega-skill guide
+- [output/uk-visa-tools/README.md](output/uk-visa-tools/README.md) - Modular skills user guide
 - [output/uk-visa-tools/COMPLETION_REPORT.md](output/uk-visa-tools/COMPLETION_REPORT.md) - Technical details
 - [docs/uk-visa-tools-ref/](docs/uk-visa-tools-ref/) - Writing guides
 - [docs/uk-innovator-visa-ref/](docs/uk-innovator-visa-ref/) - Module reference files
 
-**Status:** ✅ Production-ready (v1.2.0) - All 7 skills packaged and tested
+**Impact (Both Options):**
+- 50% time savings (100+ hours → 50-75 hours)
+- 10-20% higher approval rates through strategic body selection
+- £1,000-£2,000 cost savings per avoided application
+
+**Status:**
+- ✅ Modular Skills (v1.2.0) - Production-ready, 7 skills packaged
+- ✅ Mega-Skill (v2.0.0) - Production-ready, uses Claude's xlsx/pptx skills
 
 ---
 
