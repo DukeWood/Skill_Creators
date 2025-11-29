@@ -1102,3 +1102,4 @@ python3 -m pytest tests/test_integration.py::TestIntegration::test_basic_scrapin
 - Output is cached and reusable
 - Enhancement is optional but highly recommended
 - All scraped data stored in `output/` (git-ignored)
+- remeber two set of skills archtecture.

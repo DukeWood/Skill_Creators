@@ -1,0 +1,13 @@
+{
+	"schemaVersion": "0.1.0",
+	"name": "LinkedIn Contact - Sales CRM",
+	"behavior": "create",
+	"noteNameFormat": "{{title|replace:\"/\\s\\|\\sLinkedIn$/\":\"\"}}",
+	"path": "contacts/linkedin",
+	"triggers": [
+		"https://www.linkedin.com/in/"
+	],
+	"properties": [],
+	"noteContentFormat": "# {{title|replace:\"/\\s\\|\\sLinkedIn$/\":\"\"}}\n\n**LinkedIn:** {{url}}  \n**Captured:** {{date|date:\"YYYY-MM-DD\"}}  \n\n---\n\n## Contact Information\n\n{{\"Create a markdown table with the following details: Full Name, Current Company, Current Role, Location, Industry, LinkedIn URL. Use the exact profile data. Don't hallucinate.\"}}\n\n---\n\n## Professional Summary\n\n{{\"Write 2-3 sentences summarizing their professional background, current focus, and key expertise based on their headline and about section. Don't hallucinate.\"}}\n\n---\n\n## Key Skills & Experience\n\n{{\"List their top 5-7 skills and briefly describe their most relevant work experience (current and 1-2 previous roles). Don't hallucinate.\"}}\n\n---\n\n## Deal Information\n\n**Contact Type:** prospect  \n**Status:** new  \n**Priority:** medium  \n**Deal Size:** $  \n**Next Follow-up:**  \n\n---\n\n## My Notes\n\n### How We Met\n\n\n### Discovery Notes\n- Pain points:\n- Budget:\n- Decision makers:\n- Timeline:\n\n### Next Steps\n- [ ] Send connection request\n- [ ] Research company\n- [ ] Schedule discovery call\n- [ ] Send proposal\n\n---\n\n## Interaction History\n\n### {{date|date:\"YYYY-MM-DD\"}}\n- Profile captured from LinkedIn\n\n---\n\nTags: #contact #linkedin #prospect\n",
+	"context": "{{content}}"
+}

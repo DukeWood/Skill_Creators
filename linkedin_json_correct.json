@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "LinkedIn Contact - Sales CRM",
+  "behavior": "create",
+  "noteNameFormat": "{{contact_name|safe_name}}",
+  "path": "contacts/linkedin",
+  "triggers": ["https://www.linkedin.com/in/"],
+  "properties": [
+    {"name": "contact_name", "value": "{{\"the person's full name\"}}", "type": "text"},
+    {"name": "current_company", "value": "{{\"their current company name\"}}", "type": "text"},
+    {"name": "current_role", "value": "{{\"their current job title or position\"}}", "type": "text"},
+    {"name": "location", "value": "{{\"their location or city\"}}", "type": "text"},
+    {"name": "headline", "value": "{{\"their LinkedIn headline or professional tagline\"}}", "type": "text"},
+    {"name": "industry", "value": "{{\"their industry or sector\"}}", "type": "text"},
+    {"name": "about", "value": "{{\"a 2-3 sentence summary of their professional background from their About section\"}}", "type": "text"},
+    {"name": "linkedin_url", "value": "{{url}}", "type": "text"},
+    {"name": "contact_type", "value": "prospect", "type": "text"},
+    {"name": "status", "value": "new", "type": "text"},
+    {"name": "priority", "value": "medium", "type": "text"},
+    {"name": "deal_size", "value": "", "type": "number"},
+    {"name": "next_followup", "value": "", "type": "date"},
+    {"name": "tags", "value": "prospect, linkedin", "type": "list"},
+    {"name": "captured_date", "value": "{{time}}", "type": "datetime"}
+  ],
+  "noteContentFormat": "# {{contact_name}}\n\n**Company:** {{current_company}}  \n**Role:** {{current_role}}  \n**Location:** {{location}}  \n**Industry:** {{industry}}  \n**LinkedIn:** [Profile]({{linkedin_url}})  \n\n---\n\n## Deal Information\n\n**Deal Size:** ${{deal_size}}  \n**Priority:** {{priority}}  \n**Status:** {{status}}  \n**Next Follow-up:** {{next_followup}}  \n\n---\n\n## About\n\n{{about}}\n\n**Headline:** {{headline}}\n\n---\n\n## My Notes\n\n### How We Met\n\n\n### Discovery Notes\n- Pain points:\n- Budget:\n- Decision makers:\n- Timeline:\n\n### Next Steps\n- [ ] Send connection request\n- [ ] Research company\n- [ ] Schedule discovery call\n- [ ] Send proposal\n\n---\n\n## Interaction History\n\n### {{time|date:\"YYYY-MM-DD\"}}\n- Profile captured from LinkedIn\n"
+}

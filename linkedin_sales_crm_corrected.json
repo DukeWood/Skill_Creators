@@ -1,0 +1,13 @@
+{
+	"schemaVersion": "0.1.0",
+	"name": "LinkedIn Contact - Sales CRM",
+	"behavior": "create",
+	"noteNameFormat": "{{title|replace:\"/\\s\\|\\sLinkedIn$/\":\"\"}}",
+	"path": "contacts/linkedin",
+	"triggers": [
+		"https://www.linkedin.com/in/"
+	],
+	"properties": [],
+	"noteContentFormat": "# {{title|replace:\"/\\s\\|\\sLinkedIn$/\":\"\"}}\n\n**LinkedIn:** {{url}}  \n**Captured:** {{date|date:\"YYYY-MM-DD\"}}  \n\n---\n\n## Contact Information\n\n{{\"Create a markdown table with these fields: Full Name, Current Company, Current Role, Location, Industry, LinkedIn URL. Use the exact data from their profile. Don't hallucinate.\"}}\n\n---\n\n## Professional Summary\n\n**Headline:** {{\"their LinkedIn headline or professional tagline\"}}\n\n**About:** {{\"Write 2-3 sentences summarizing their professional background and current focus based on their About section. Don't hallucinate.\"}}\n\n---\n\n## Deal Information\n\n**Contact Type:** prospect  \n**Status:** new  \n**Priority:** medium  \n**Deal Size:** $  \n**Next Follow-up:**  \n\n---\n\n## Notes\n\n### How We Connected\n\n\n### Discussion Points\n- \n\n### Next Steps\n- [ ] Send connection request\n- [ ] Research company\n- [ ] \n\n---\n\n## Interaction History\n\n### {{date|date:\"YYYY-MM-DD\"}}\n- Profile captured from LinkedIn\n\n---\n\nOrigin: {{url}} (LinkedIn)  \nTags: #linkedin #prospect #contact  \nCaptured: {{date|date:\"YYYY-MM-DD HH:mm\"}}  \n",
+	"context": "{{content|strip_tags:(\"aside,iframe,ad-banner-container\")}}"
+}
